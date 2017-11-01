@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using Newtonsoft.Json;
-using System.IO;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace ExtractContentHAR
 {
@@ -41,7 +38,9 @@ namespace ExtractContentHAR
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 txtFile.Text = ofd.FileName;
-                LoadHARFile(ofd.FileName);
+                string content = "";
+                using (StreamReader sr = new StreamReader(ofd.FileName)) { content = sr.ReadToEnd(); }
+                LoadHARContent(content);
             }
         }
 
@@ -59,9 +58,9 @@ namespace ExtractContentHAR
             this.TimerDispose = false;
             this.InstanceTimer();
             this.Pattern = txtPattern.Text.ToLower().Trim();
-            this.Messages = new List<ItemMessage>();
+            //this.Messages = new List<ItemMessage>();
             this.Timer.Enabled = true;
-            txtFile_KeyDown(null, new KeyEventArgs(Keys.Enter));
+            //txtFile_KeyDown(null, new KeyEventArgs(Keys.Enter));
             txtFile.Enabled = false;
             btnBrowse.Enabled = false;
             btnParseData.Enabled = false;
@@ -72,7 +71,6 @@ namespace ExtractContentHAR
 
             Thread th = new Thread(new ParameterizedThreadStart(DownloadFiles));
             th.Start(txtPath.Text);
-
         }
 
         private void btnParseData_Click(object sender, EventArgs e)
@@ -182,19 +180,18 @@ namespace ExtractContentHAR
             this.Timer.Disposed += new EventHandler(Timer_Disposed);
         }
 
-        private void LoadHARFile(string file)
+        private void LoadHARContent(string content, bool clearFirst = true)
         {
             try
             {
                 btnParseData.Enabled = true;
                 txtPattern.ReadOnly = false;
 
-                lstUrls.Items.Clear();
-                string content = "";
-                using (StreamReader sr = new StreamReader(file)) { content = sr.ReadToEnd(); }
+                if (clearFirst) lstUrls.Items.Clear();
+                if (clearFirst) this.Messages.Clear();
+
                 JObject json = JsonConvert.DeserializeObject(content) as JObject;
                 JToken entries = json.First.First["entries"];
-                this.Messages.Clear();
                 foreach (var entry in entries)
                 {
                     try
@@ -209,16 +206,21 @@ namespace ExtractContentHAR
                     }
                     catch { }
                 }
-                foreach (var im in this.Messages.OrderBy(x => x.URL))
-                {
-                    ListViewItem lv = lstUrls.Items.Add(im.Status);
-                    lv.SubItems.Add(im.URL);
-                    im.ListViewItem = lv;
-                }
+                if (clearFirst) ReorderLists();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ReorderLists()
+        {
+            foreach (var im in this.Messages.OrderBy(x => x.URL))
+            {
+                ListViewItem lv = lstUrls.Items.Add(im.Status);
+                lv.SubItems.Add(im.URL);
+                im.ListViewItem = lv;
             }
         }
 
@@ -275,9 +277,18 @@ namespace ExtractContentHAR
 
         private void txtFile_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            try
             {
-                LoadHARFile(txtFile.Text);
+                if (e.KeyCode == Keys.Enter)
+                {
+                    string content = "";
+                    using (StreamReader sr = new StreamReader(txtFile.Text)) { content = sr.ReadToEnd(); }
+                    LoadHARContent(content);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK);
             }
         }
 
@@ -288,6 +299,33 @@ namespace ExtractContentHAR
             public string Status { get; set; }
 
             public string URL { get; set; }
+        }
+
+        private void btnAppend_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
+                Multiselect = true
+            };
+            ofd.Filter = "All files (*.*)|*.*";
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                foreach (var item in ofd.FileNames)
+                {
+                    string content = "";
+                    using (StreamReader sr = new StreamReader(item)) { content = sr.ReadToEnd(); }
+                    LoadHARContent(content, false);
+                }
+                ReorderLists();
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            this.Messages = new List<ItemMessage>();
+            lstUrls.Items.Clear();
+            txtPattern.Enabled = true;
+            btnParseData.Enabled = true;
         }
     }
 }

@@ -41,6 +41,8 @@
             this.txtPath = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.btnExtract = new System.Windows.Forms.Button();
+            this.btnAppend = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -59,15 +61,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFile.Location = new System.Drawing.Point(65, 12);
             this.txtFile.Name = "txtFile";
-            this.txtFile.Size = new System.Drawing.Size(717, 21);
+            this.txtFile.Size = new System.Drawing.Size(496, 21);
             this.txtFile.TabIndex = 1;
             // 
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(788, 11);
+            this.btnBrowse.Location = new System.Drawing.Point(567, 11);
             this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(30, 23);
+            this.btnBrowse.Size = new System.Drawing.Size(29, 23);
             this.btnBrowse.TabIndex = 2;
             this.btnBrowse.Text = "...";
             this.btnBrowse.UseVisualStyleBackColor = true;
@@ -171,12 +173,36 @@
             this.btnExtract.UseVisualStyleBackColor = true;
             this.btnExtract.Click += new System.EventHandler(this.btnExtract_Click);
             // 
+            // btnAppend
+            // 
+            this.btnAppend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAppend.Location = new System.Drawing.Point(711, 11);
+            this.btnAppend.Name = "btnAppend";
+            this.btnAppend.Size = new System.Drawing.Size(103, 23);
+            this.btnAppend.TabIndex = 12;
+            this.btnAppend.Text = "Append";
+            this.btnAppend.UseVisualStyleBackColor = true;
+            this.btnAppend.Click += new System.EventHandler(this.btnAppend_Click);
+            // 
+            // btnClear
+            // 
+            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClear.Location = new System.Drawing.Point(602, 11);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(103, 23);
+            this.btnClear.TabIndex = 13;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(829, 515);
+            this.Controls.Add(this.btnClear);
+            this.Controls.Add(this.btnAppend);
             this.Controls.Add(this.btnExtract);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtPath);
@@ -190,6 +216,7 @@
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "frmMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Extract Content";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -211,6 +238,8 @@
         private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnExtract;
+        private System.Windows.Forms.Button btnAppend;
+        private System.Windows.Forms.Button btnClear;
     }
 }
 
